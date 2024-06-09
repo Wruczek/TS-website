@@ -109,7 +109,7 @@ $(function () {
     const newsEditedElements = document.querySelectorAll('.news-edited');
     newsEditedElements.forEach(element => {
     const editedDate = element.getAttribute('data-date');
-    const tooltipTitle = `${dayjs(editedDate).format('D MMMM YYYY')}`;
+    const tooltipTitle = `${dayjs(editedDate).format('D MMMM YYYY MM:HH')}`;
     element.setAttribute('data-original-title', tooltipTitle);
     })
 });

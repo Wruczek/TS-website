@@ -105,10 +105,10 @@ $(function () {
             }
         });
     }
-    // News edited date
+    // News edit date
     $('.news-edited').each(function() {
-        const editedDate = $(this).data('date');
-        const tooltipTitle = `${dayjs(editedDate).format('D MMMM YYYY MM:HH')}`;
+        const editedDate = $(this).data('timestamp');
+        const tooltipTitle = timestampToDate(editedDate, true);
         $(this).attr('data-original-title', tooltipTitle);
     });
 });

@@ -81,6 +81,11 @@ $(function () {
         adminStatusDisplayOffline(show)
     })
 
+    // News edit date tooltip
+    $('.news-edited').each(function() {
+        updateTooltipWithTranslation($(this), timestampToDate($(this).data('timestamp'), true))
+    });
+
     function adminStatusDisplayOffline(show) {
         var offlineAdmins = $(".admin-status .status-offline")
         show ? offlineAdmins.show() : offlineAdmins.hide()

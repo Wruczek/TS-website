@@ -34,11 +34,11 @@
                     <div>
                         {strtotime($news["added"])|fuzzyDateAbbr}
                         {if $news["edited"] !== null}
-					        <i class="fas fa-pencil-alt mr-0 ml-1 news-edited"
+                            <i class="fas fa-pencil-alt mr-0 ml-1 news-edited"
                                 data-toggle="tooltip"
                                 data-translation="{_"HOME_NEWS_EDITED"}"
                                 n:attr="data-timestamp => strtotime($news['edited'])"></i>
-				        {/if}
+                        {/if}
                     </div>
                 </div>
                 <div class="card-body">

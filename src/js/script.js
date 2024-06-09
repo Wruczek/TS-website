@@ -81,6 +81,11 @@ $(function () {
         adminStatusDisplayOffline(show)
     })
 
+    // News edit date tooltip
+    $('.news-edited').each(function() {
+        updateTooltipWithTranslation($(this), timestampToDate($(this).data('timestamp'), true))
+    });
+
     function adminStatusDisplayOffline(show) {
         var offlineAdmins = $(".admin-status .status-offline")
         show ? offlineAdmins.show() : offlineAdmins.hide()
@@ -105,12 +110,6 @@ $(function () {
             }
         });
     }
-    // News edit date
-    $('.news-edited').each(function() {
-        const editedDate = $(this).data('timestamp');
-        const tooltipTitle = timestampToDate(editedDate, true);
-        $(this).attr('data-original-title', tooltipTitle);
-    });
 });
 
 function timestampToDate(timestamp, full) {

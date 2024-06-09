@@ -34,7 +34,7 @@
                     <div>
                         {strtotime($news["added"])|fuzzyDateAbbr}
                         {if $news["edited"] !== null}
-					        <i class="fas fa-pencil-alt mr-0 ml-1" data-toggle="tooltip" data-html="true" title="Edited: {strtotime($news["edited"])|fuzzyDateAbbr}"></i>
+					        <i class="fas fa-pencil-alt mr-0 ml-1 news-edited" data-toggle="tooltip" n:attr="data-date => $news['edited']" data-html="true"></i>
 				        {/if}
                     </div>
                 </div>

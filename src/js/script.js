@@ -105,6 +105,13 @@ $(function () {
             }
         });
     }
+    // News edited date
+    const newsEditedElements = document.querySelectorAll('.news-edited');
+    newsEditedElements.forEach(element => {
+    const editedDate = element.getAttribute('data-date');
+    const tooltipTitle = `${dayjs(editedDate).format('D MMMM YYYY')}`;
+    element.setAttribute('data-original-title', tooltipTitle);
+    })
 });
 
 function timestampToDate(timestamp, full) {

@@ -25,10 +25,10 @@
                     <h5>
                         {ifset $news["link"]}
                             <a href="{$news["link"]}" n:attr="target => $news['external'] ? '_blank'">
-                                {$news["title"]}
+                                {$news["title"]|noescape}
                             </a>
                         {else}
-                            {$news["title"]}
+                            {$news["title"]|noescape}
                         {/ifset}
                     </h5>
                     <div>

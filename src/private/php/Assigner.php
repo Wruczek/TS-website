@@ -162,5 +162,9 @@ class Assigner {
 
         return false;
     }
+    
+    public static function getCooldownPeriod() {
+        return Config::get("assigner_cooldown_period");
+    }
 
 }

@@ -36,7 +36,7 @@ INSERT INTO `DBPREFIXconfig` (`identifier`, `type`, `value`, `user_editable`) VA
 ('adminstatus_offlinehiddenbydefault', 'BOOL', 'false', 1),
 ('imprint_enabled', 'BOOL', 'false', 1),
 ('imprint_url', 'STRING', 'imprint.php', 1),
-('assigner_cooldown_period', 'INT', '0', 1),
+('assigner_cooldown_seconds', 'INT', '0', 1),
 ('assigner_required_sgids', 'JSON', '[]', 1),
 ('viewer_hidden_channel_ids', 'JSON', '[]', 1);
 

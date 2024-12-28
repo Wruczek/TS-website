@@ -8,7 +8,7 @@ use Wruczek\TSWebsite\Utils\TemplateUtils;
 require_once __DIR__ . "/private/php/load.php";
 
 // Fetch cooldown period from the database
-$assigner_cooldown_seconds = Assigner::getCooldownPeriod();
+$cooldownSeconds = Assigner::getCooldownPeriod();
 
 if (!TeamSpeakUtils::i()->checkTSConnection()) {
     TemplateUtils::i()->renderTemplate("assigner");
@@ -24,9 +24,9 @@ if (Auth::isLoggedIn()) {
     $data["canUseAssigner"] = $canUseAssigner;
 
     // Check if the user is on cooldown
-    $cooldownStatus = Assigner::isOnCooldown();
-    $data["onCooldown"] = $cooldownStatus["onCooldown"];
-    $data["cooldownRemaining"] = $cooldownStatus["cooldownRemaining"] ?? 0;
+    $cooldownRemaining = Assigner::isOnCooldown();
+    $data["onCooldown"] = $cooldownRemaining > 0;
+    $data["cooldownRemaining"] = $cooldownRemaining;
 
     if (isset($_POST["assigner"]) && $canUseAssigner && !$data["onCooldown"]) {
         $groups = array_keys($_POST["assigner"]); // get all group ids

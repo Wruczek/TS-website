@@ -2,6 +2,7 @@
 
 namespace Wruczek\TSWebsite;
 
+use Wruczek\PhpFileCache\PhpFileCache;
 use Wruczek\TSWebsite\Utils\TeamSpeakUtils;
 
 class Assigner {
@@ -167,29 +168,26 @@ class Assigner {
         return Config::get("assigner_cooldown_seconds");
     }
 
-    public static function isOnCooldown(): array {
+    private static function getCache(): PhpFileCache {
+        return new PhpFileCache(__CACHE_DIR, "assigner");
+    }
+
+    public static function isOnCooldown(): int {
         $cooldownPeriod = self::getCooldownPeriod();
         $cldbid = Auth::getCldbid();
-        $cacheKey = "assigner_last_usage_" . $cldbid;
-        $lastUsageTime = CacheManager::i()->get($cacheKey) ?? 0;
+        $cacheKey = "last_usage_" . $cldbid;
+        $lastUsageTime = self::getCache()->retrieve($cacheKey) ?? 0;
         $currentTime = time();
         $timeSinceLastUsage = $currentTime - $lastUsageTime;
 
-        if ($timeSinceLastUsage < $cooldownPeriod) {
-            return [
-                "onCooldown" => true,
-                "cooldownRemaining" => $cooldownPeriod - $timeSinceLastUsage
-            ];
-        }
-
-        return ["onCooldown" => false];
+        return max(0, $cooldownPeriod - $timeSinceLastUsage);
     }
 
     public static function updateLastUsageTime(): void {
         $cldbid = Auth::getCldbid();
-        $cacheKey = "assigner_last_usage_" . $cldbid;
+        $cacheKey = "last_usage_" . $cldbid;
         $cooldownPeriod = self::getCooldownPeriod();
-        CacheManager::i()->set($cacheKey, time(), $cooldownPeriod);
+        self::getCache()->store($cacheKey, time(), $cooldownPeriod);
     }
 
 }

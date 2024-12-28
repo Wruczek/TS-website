@@ -184,4 +184,13 @@ class CacheManager {
     public function clearChannelGroupList(): void {
         $this->cache->eraseKey("channelgrouplist");
     }
+
+    public function get(string $key) {
+        return $this->cache->retrieve($key);
+    }
+
+    public function set(string $key, $value, int $ttl = 0): bool {
+        $this->cache->store($key, $value, $ttl);
+        return true;
+    }
 }

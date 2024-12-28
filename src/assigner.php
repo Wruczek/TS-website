@@ -7,10 +7,8 @@ use Wruczek\TSWebsite\Utils\TemplateUtils;
 
 require_once __DIR__ . "/private/php/load.php";
 
-session_start();
-
 // Fetch cooldown period from the database
-$cooldownPeriod = Assigner::getCooldownPeriod();
+$assigner_cooldown_seconds = Assigner::getCooldownPeriod();
 
 if (!TeamSpeakUtils::i()->checkTSConnection()) {
     TemplateUtils::i()->renderTemplate("assigner");
@@ -26,16 +24,9 @@ if (Auth::isLoggedIn()) {
     $data["canUseAssigner"] = $canUseAssigner;
 
     // Check if the user is on cooldown
-    $lastUsageTime = $_SESSION['lastAssignerUsage'] ?? 0;
-    $currentTime = time();
-    $timeSinceLastUsage = $currentTime - $lastUsageTime;
-
-    if ($timeSinceLastUsage < $cooldownPeriod) {
-        $data["onCooldown"] = true;
-        $data["cooldownRemaining"] = $cooldownPeriod - $timeSinceLastUsage;
-    } else {
-        $data["onCooldown"] = false;
-    }
+    $cooldownStatus = Assigner::isOnCooldown();
+    $data["onCooldown"] = $cooldownStatus["onCooldown"];
+    $data["cooldownRemaining"] = $cooldownStatus["cooldownRemaining"] ?? 0;
 
     if (isset($_POST["assigner"]) && $canUseAssigner && !$data["onCooldown"]) {
         $groups = array_keys($_POST["assigner"]); // get all group ids
@@ -49,7 +40,7 @@ if (Auth::isLoggedIn()) {
             // invalidate the cache
             Auth::invalidateUserGroupCache();
             // Update the last usage time
-            $_SESSION['lastAssignerUsage'] = $currentTime;
+            Assigner::updateLastUsageTime();
         }
     }
 

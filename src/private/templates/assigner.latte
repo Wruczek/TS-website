@@ -29,7 +29,7 @@
                 </div>
             {elseif $onCooldown}
                 <div class="alert alert-warning">
-                    <i class="fas fa-hourglass-half"></i>{_"ASSIGNER_COOLDOWN_MESSAGE"} {$cooldownRemaining} {_"SECONDS"}
+                    <i class="fas fa-hourglass-half"></i>{_"ASSIGNER_COOLDOWN_MESSAGE", $cooldownRemaining}
                 </div>
             {else}
                 {ifset $groupChangeStatus}

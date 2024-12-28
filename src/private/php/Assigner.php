@@ -163,8 +163,33 @@ class Assigner {
         return false;
     }
     
-    public static function getCooldownPeriod() {
-        return Config::get("assigner_cooldown_period");
+    public static function getCooldownPeriod(): int {
+        return Config::get("assigner_cooldown_seconds");
+    }
+
+    public static function isOnCooldown(): array {
+        $cooldownPeriod = self::getCooldownPeriod();
+        $cldbid = Auth::getCldbid();
+        $cacheKey = "assigner_last_usage_" . $cldbid;
+        $lastUsageTime = CacheManager::i()->get($cacheKey) ?? 0;
+        $currentTime = time();
+        $timeSinceLastUsage = $currentTime - $lastUsageTime;
+
+        if ($timeSinceLastUsage < $cooldownPeriod) {
+            return [
+                "onCooldown" => true,
+                "cooldownRemaining" => $cooldownPeriod - $timeSinceLastUsage
+            ];
+        }
+
+        return ["onCooldown" => false];
+    }
+
+    public static function updateLastUsageTime(): void {
+        $cldbid = Auth::getCldbid();
+        $cacheKey = "assigner_last_usage_" . $cldbid;
+        $cooldownPeriod = self::getCooldownPeriod();
+        CacheManager::i()->set($cacheKey, time(), $cooldownPeriod);
     }
 
 }

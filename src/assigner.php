@@ -7,7 +7,6 @@ use Wruczek\TSWebsite\Utils\TemplateUtils;
 
 require_once __DIR__ . "/private/php/load.php";
 
-// Fetch cooldown period from the database
 $cooldownSeconds = Assigner::getCooldownPeriod();
 
 if (!TeamSpeakUtils::i()->checkTSConnection()) {
@@ -22,13 +21,9 @@ $data = [
 if (Auth::isLoggedIn()) {
     $canUseAssigner = Assigner::canUseAssigner();
     $data["canUseAssigner"] = $canUseAssigner;
+    $data["cooldownRemaining"] = Assigner::getCooldownSecondsRemaining();
 
-    // Check if the user is on cooldown
-    $cooldownRemaining = Assigner::isOnCooldown();
-    $data["onCooldown"] = $cooldownRemaining > 0;
-    $data["cooldownRemaining"] = $cooldownRemaining;
-
-    if (isset($_POST["assigner"]) && $canUseAssigner && !$data["onCooldown"]) {
+    if (isset($_POST["assigner"]) && $canUseAssigner && $data["cooldownRemaining"] <= 0) {
         $groups = array_keys($_POST["assigner"]); // get all group ids
         $groups = array_filter($groups, "is_int"); // only keep integers
 
@@ -37,10 +32,9 @@ if (Auth::isLoggedIn()) {
 
         if ($changeGroups === 0) {
             // if groups have been successfully updated,
-            // invalidate the cache
+            // invalidate the cache and update last use time
             Auth::invalidateUserGroupCache();
-            // Update the last usage time
-            Assigner::updateLastUsageTime();
+            Assigner::updateLastUseTime();
         }
     }
 

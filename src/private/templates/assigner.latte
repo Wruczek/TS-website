@@ -27,7 +27,7 @@
                 <div class="alert alert-danger">
                     <i class="fa fa-exclamation-circle"></i>{_"ASSIGNER_NO_REQUIRED_GROUPS"}
                 </div>
-            {elseif $onCooldown}
+            {elseif $cooldownRemaining > 0}
                 <div class="alert alert-warning">
                     <i class="fas fa-hourglass-half"></i>{_"ASSIGNER_COOLDOWN_MESSAGE", $cooldownRemaining}
                 </div>

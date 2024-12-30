@@ -19,18 +19,15 @@ $data = [
 ];
 
 if (Auth::isLoggedIn()) {
-    $canUseAssigner = Assigner::canUseAssigner();
-    $data["canUseAssigner"] = $canUseAssigner;
+    $data["canUseAssigner"] = Assigner::canUseAssigner();
     $data["cooldownRemaining"] = Assigner::getCooldownSecondsRemaining();
 
-    if (isset($_POST["assigner"]) && $canUseAssigner && $data["cooldownRemaining"] <= 0) {
+    if (isset($_POST["assigner"]) && $data["canUseAssigner"] && $data["cooldownRemaining"] <= 0) {
         $groups = array_keys($_POST["assigner"]); // get all group ids
         $groups = array_filter($groups, "is_int"); // only keep integers
+        $data["groupChangeStatus"] = Assigner::changeGroups($groups);
 
-        $changeGroups = Assigner::changeGroups($groups);
-        $data["groupChangeStatus"] = $changeGroups;
-
-        if ($changeGroups === 0) {
+        if ($data["groupChangeStatus"] === 0) {
             // if groups have been successfully updated,
             // invalidate the cache and update last use time
             Auth::invalidateUserGroupCache();
@@ -41,10 +38,11 @@ if (Auth::isLoggedIn()) {
     try {
         $assignerConfig = Assigner::getAssignerArray();
         $assignerConfig = array_chunk($assignerConfig, 2);
-    } catch (\Exception $e) {}
+    } catch (\Exception $e) {
+        $assignerConfig = null;
+    }
 
-    // suppress warnings - might be null on exception
-    $data["assignerConfig"] = @$assignerConfig;
+    $data["assignerConfig"] = $assignerConfig;
 }
 
 TemplateUtils::i()->renderTemplate("assigner", $data);

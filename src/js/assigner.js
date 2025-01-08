@@ -40,33 +40,27 @@ $(function () {
             }
         })
     }
-})
 
-function startCooldownTimer(duration) {
-    var timer = duration, minutes, seconds;
-    var cooldownElement = document.getElementById('cooldown-timer');
-    if (!cooldownElement) return;
+    var cooldownElement = $("#cooldown-timer");
 
-    function updateTimer() {
-        minutes = parseInt(timer / 60);
-        seconds = parseInt(timer % 60);
+    if (cooldownElement.length) {
+        var secondsLeft = cooldownRemaining;
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        cooldownElement.textContent = minutes + ":" + seconds;
-    }
-
-    updateTimer();
-
-    var interval = setInterval(function () {
-        updateTimer();
-    
-        if (--timer < 0) {
-            clearInterval(interval);
-            location.reload();
+        function updateTimer() {
+            var minutes = Math.floor(secondsLeft / 60).toString().padStart(2, "0");
+            var seconds = Math.floor(secondsLeft % 60).toString().padStart(2, "0");
+            cooldownElement.text(minutes + ":" + seconds);
         }
-    }, 1000);
-}
 
-startCooldownTimer(cooldownRemaining);
+        updateTimer();
+
+        var interval = setInterval(function () {
+            updateTimer();
+
+            if (--secondsLeft < 0) {
+                clearInterval(interval);
+                location.reload();
+            }
+        }, 1000);
+    }
+})

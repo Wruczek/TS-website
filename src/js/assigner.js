@@ -41,3 +41,32 @@ $(function () {
         })
     }
 })
+
+function startCooldownTimer(duration) {
+    var timer = duration, minutes, seconds;
+    var cooldownElement = document.getElementById('cooldown-timer');
+    if (!cooldownElement) return;
+
+    function updateTimer() {
+        minutes = parseInt(timer / 60);
+        seconds = parseInt(timer % 60);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        cooldownElement.textContent = minutes + ":" + seconds;
+    }
+
+    updateTimer();
+
+    var interval = setInterval(function () {
+        updateTimer();
+    
+        if (--timer < 0) {
+            clearInterval(interval);
+            location.reload();
+        }
+    }, 1000);
+}
+
+startCooldownTimer(cooldownRemaining);

@@ -29,7 +29,7 @@
                 </div>
             {elseif $cooldownRemaining > 0}
                 <div class="alert alert-warning">
-                    <i class="fas fa-hourglass-half"></i>{_"ASSIGNER_COOLDOWN_MESSAGE", $cooldownRemaining}
+                    <i class="fas fa-hourglass-half"></i>{_"ASSIGNER_COOLDOWN_MESSAGE", "<span id=\"cooldown-timer\"></span>"}
                 </div>
             {else}
                 {ifset $groupChangeStatus}
@@ -131,4 +131,31 @@
 
 {block footerbottom}
     {$tplutils::includeScript("js/assigner.js", true)}
+    <script>
+        function startCooldownTimer(duration) {
+            var timer = duration, minutes, seconds;
+            var cooldownElement = document.getElementById('cooldown-timer');
+            if (!cooldownElement) return;
+
+            var interval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                cooldownElement.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    location.reload();
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            var cooldownRemaining = {$cooldownRemaining};
+            startCooldownTimer(cooldownRemaining);
+        };
+    </script>
 {/block}

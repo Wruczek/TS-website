@@ -3,7 +3,7 @@ $(function () {
 
     recalculateGroups()
 
-    $(".group-assigner .list-group-item:not(.assigner-header)").click(function (e) {
+    $(".group-assigner .list-group-item:not(.assigner-header):not(.disabled)").click(function (e) {
         var checkbox = $(this).find("input[type=checkbox]")
         $(checkbox).prop("checked", !checkbox.is(':checked'))
         recalculateGroups()
@@ -46,7 +46,7 @@ $(function () {
     if (cooldownElement.length) {
         var secondsLeft = cooldownRemaining;
 
-        function updateTimer() {
+        var updateTimer = function() {
             var minutes = Math.floor(secondsLeft / 60).toString().padStart(2, "0");
             var seconds = Math.floor(secondsLeft % 60).toString().padStart(2, "0");
             cooldownElement.text(minutes + ":" + seconds);
@@ -55,12 +55,12 @@ $(function () {
         updateTimer();
 
         var interval = setInterval(function () {
-            updateTimer();
-
-            if (--secondsLeft < 0) {
+            if (--secondsLeft <= 0) {
                 clearInterval(interval);
-                location.reload();
+                location = location
             }
+
+            updateTimer();
         }, 1000);
     }
 })

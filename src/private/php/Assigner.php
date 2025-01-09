@@ -167,7 +167,7 @@ class Assigner {
     private static function getCache(): PhpFileCache {
         return new PhpFileCache(__CACHE_DIR, "assigner");
     }
-    
+
     public static function getCooldownSeconds(): int {
         return Config::get("assigner_cooldown_seconds");
     }
@@ -186,8 +186,8 @@ class Assigner {
         }
 
         $cacheKey = "last_use_" . Auth::getCldbid();
-        $lastUseTimestamp = self::getCache()->retrieve($cacheKey) ?? 0;
-        return max(0, time() - $lastUseTimestamp - $cooldownSeconds);
+        $lastUseTimestamp = self::getCache()->retrieve($cacheKey);
+        return max(0, $cooldownSeconds - (time() - $lastUseTimestamp));
     }
 
     /**

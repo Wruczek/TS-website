@@ -7,8 +7,6 @@ use Wruczek\TSWebsite\Utils\TemplateUtils;
 
 require_once __DIR__ . "/private/php/load.php";
 
-$cooldownSeconds = Assigner::getCooldownPeriod();
-
 if (!TeamSpeakUtils::i()->checkTSConnection()) {
     TemplateUtils::i()->renderTemplate("assigner");
     exit;
@@ -32,6 +30,8 @@ if (Auth::isLoggedIn()) {
             // invalidate the cache and update last use time
             Auth::invalidateUserGroupCache();
             Assigner::updateLastUseTime();
+            // refresh cooldown time after group change
+            $data["cooldownRemaining"] = Assigner::getCooldownSecondsRemaining();
         }
     }
 

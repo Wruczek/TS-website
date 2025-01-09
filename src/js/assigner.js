@@ -3,7 +3,7 @@ $(function () {
 
     recalculateGroups()
 
-    $(".group-assigner .list-group-item:not(.assigner-header)").click(function (e) {
+    $(".group-assigner .list-group-item:not(.assigner-header):not(.disabled)").click(function (e) {
         var checkbox = $(this).find("input[type=checkbox]")
         $(checkbox).prop("checked", !checkbox.is(':checked'))
         recalculateGroups()
@@ -39,5 +39,28 @@ $(function () {
                 $(".group-assigner .invalid-groups-alert").css("display", invalidGroups ? "inline-block" : "none")
             }
         })
+    }
+
+    var cooldownElement = $("#cooldown-timer");
+
+    if (cooldownElement.length) {
+        var secondsLeft = cooldownRemaining;
+
+        var updateTimer = function() {
+            var minutes = Math.floor(secondsLeft / 60).toString().padStart(2, "0");
+            var seconds = Math.floor(secondsLeft % 60).toString().padStart(2, "0");
+            cooldownElement.text(minutes + ":" + seconds);
+        }
+
+        updateTimer();
+
+        var interval = setInterval(function () {
+            if (--secondsLeft <= 0) {
+                clearInterval(interval);
+                location = location
+            }
+
+            updateTimer();
+        }, 1000);
     }
 })

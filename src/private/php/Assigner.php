@@ -2,6 +2,7 @@
 
 namespace Wruczek\TSWebsite;
 
+use Wruczek\PhpFileCache\PhpFileCache;
 use Wruczek\TSWebsite\Utils\TeamSpeakUtils;
 
 class Assigner {
@@ -161,6 +162,48 @@ class Assigner {
         }
 
         return false;
+    }
+
+    private static function getCache(): PhpFileCache {
+        return new PhpFileCache(__CACHE_DIR, "assigner");
+    }
+
+    public static function getCooldownSeconds(): int {
+        return Config::get("assigner_cooldown_seconds");
+    }
+
+    /**
+     * Checks if current user is on assigner cooldown.
+     * @return int assigner cooldown remaining in seconds, or 0 if no cooldown exists
+     * @throws UserNotAuthenticatedException
+     */
+    public static function getCooldownSecondsRemaining(): int {
+        $cooldownSeconds = self::getCooldownSeconds();
+
+        // cooldown of 0 or less = no cooldown
+        if ($cooldownSeconds <= 0) {
+            return 0;
+        }
+
+        $cacheKey = "last_use_" . Auth::getCldbid();
+        $lastUseTimestamp = self::getCache()->retrieve($cacheKey);
+        return max(0, $cooldownSeconds - (time() - $lastUseTimestamp));
+    }
+
+    /**
+     * Set current user's last assigner use time. Used to check cooldown.
+     * @throws UserNotAuthenticatedException
+     */
+    public static function updateLastUseTime(): void {
+        $cooldownSeconds = self::getCooldownSeconds();
+
+        // cooldown of 0 or less = no cooldown
+        if ($cooldownSeconds <= 0) {
+            return;
+        }
+
+        $cacheKey = "last_use_" . Auth::getCldbid();
+        self::getCache()->store($cacheKey, time(), $cooldownSeconds);
     }
 
 }

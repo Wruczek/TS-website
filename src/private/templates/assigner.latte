@@ -20,7 +20,7 @@
             {elseif $assignerConfig === null}
                 {include "utils/data-problem.latte", message => __get("CANNOT_GET_DATA", "assigner")}
             {elseif empty($assignerConfig)}
-                <div class="alert alert-info">
+                <div class="alert alert-info mb-0">
                     <i class="fas fa-info-circle"></i>{_"ASSIGNER_NOT_CONFIGURED"}
                 </div>
             {elseif !$canUseAssigner}
@@ -53,6 +53,12 @@
                     {/if}
                 {/ifset}
 
+                {if $cooldownRemaining > 0}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-hourglass-half"></i>{_"ASSIGNER_COOLDOWN_MESSAGE", "<span id=\"cooldown-timer\"></span>"}
+                    </div>
+                {/if}
+
                 <form id="assigner-form" method="post">
                     {foreach $assignerConfig as $row}
                         <div class="row justify-content-md-center">
@@ -73,7 +79,7 @@
                                         </li>
 
                                         {foreach $assignerCategory["groups"] as $group}
-                                            <div class="list-group-item list-group-item-action">
+                                            <div n:class="list-group-item, list-group-item-action, $cooldownRemaining > 0 ? disabled">
                                                 <div>
                                                     {if $group["iconid"]}
                                                         <img src="api/geticon.php?iconid={$group["iconid"]}" alt="{$group["name"]} icon" class="assigner-icon">
@@ -87,7 +93,7 @@
                                                         <input type="checkbox" class="custom-control-input"
                                                                id="assignerCheck{$group["sgid"]}"
                                                                name="assigner[{$group["sgid"]}]"
-                                                            n:attr="checked => $group['assigned']">
+                                                            n:attr="checked => $group['assigned'], readonly => $cooldownRemaining > 0">
                                                         <label class="custom-control-label" for="assignerCheck{$group["sgid"]}">&nbsp;</label>
                                                     </div>
                                                 </div>
@@ -106,18 +112,19 @@
                     <!-- all of the user's groups. the "dummy" will get filtered out with array_filter -->
                     <input type="hidden" name="assigner[dummy]">
 
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary btn-lg assigner-save">
-                            <i class="far fa-save"></i>{_"ASSIGNER_SAVE_BUTTON"}
-                        </button>
+                    {if  $cooldownRemaining <= 0}
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg assigner-save">
+                                <i class="far fa-save"></i>{_"ASSIGNER_SAVE_BUTTON"}
+                            </button>
 
-                        <div>
-                            <div class="alert alert-danger mt-3 invalid-groups-alert" style="display: none">
-                                <i class="fa fa-exclamation-circle"></i>{_"ASSIGNER_INVALID_GROUPS"}
+                            <div>
+                                <div class="alert alert-danger mt-3 invalid-groups-alert" style="display: none">
+                                    <i class="fa fa-exclamation-circle"></i>{_"ASSIGNER_INVALID_GROUPS"}
+                                </div>
                             </div>
                         </div>
-                    </div>
-
+                    {/if}
                 </form>
             {/if}
         </div>
@@ -126,5 +133,9 @@
 {/block}
 
 {block footerbottom}
+    <script>
+        var cooldownRemaining = {$cooldownRemaining ?? null}
+    </script>
+
     {$tplutils::includeScript("js/assigner.js", true)}
 {/block}

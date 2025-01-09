@@ -146,7 +146,7 @@ if (isset($_GET["syncicons"])) {
 
                     <div class="alert alert-info">
                         If the TS3 server is not hosted locally, and you have access to the TS3
-                        server files, then make sure to edit the <code>query_ip_whitelist.txt</code> file and
+                        server files, then make sure to edit the <code>query_ip_allowlist.txt</code> file and
                         add the IP of the machine/VPS hosting TS&#8209;website to it, then restart the TS3 server.
                         Otherwise, TS&#8209;website might get rate-limited by the TS3 server and periodically stop working.
                     </div>
